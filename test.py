@@ -15,7 +15,8 @@ LineList = (
 
 MaxPersistance = 2
 OldLines = []
-Phosphor = (1.00, 1.00, 0.70)
+#Phosphor = (1.00, 1.00, 0.70)
+Phosphor = (1.00, 0.50, 0.50)
 Decay = 1.5
 BrightLevels = []
 
@@ -29,12 +30,28 @@ def show(lines):
     # display the lines
     for (bl, display_lines) in enumerate(OldLines):
         glColor3f(*BrightLevels[bl])
-        glLineWidth(1.0)
+        glLineWidth(5.0)
         glBegin(GL_LINES)
         for (bx, by, ex, ey) in display_lines:
             glVertex3f(bx, by, 0.0)
             glVertex3f(ex, ey, 0.0)
         glEnd()
+
+Poly = (
+        ( 1.0,  1.0, 0.0),
+        ( 1.0, -1.0, 0.0),
+        (-1.0, -1.0, 0.0),
+        (-1.0,  1.0, 0.0),
+       )
+
+def square():
+    # draw filled square in XY plane
+    glLineWidth(1.0)
+    glColor3fv((0.7, 0.7, 1.0))
+    glBegin(GL_POLYGON)
+    for point in Poly:
+        glVertex3fv(point)
+    glEnd()
 
 def main():
     # establish brightness levels
@@ -56,20 +73,22 @@ def main():
     dx = 0.0
     delta = -0.01
     while True:
-        # generate new display list
+        # create new display list by oscillating along X axis
         d_list = []
         for (bx, by, ex, ey) in LineList:
             d_list.append((bx+dx, by, ex+dx, ey))
         dx += delta
         if dx > 0.5 or dx < -0.5:
             delta = -delta
+#        d_list = LineList[:]
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-        #glRotatef(1, 3, 1, 1)
+        glRotatef(1, 0, 3, 0)
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+        square()
         show(d_list)
         pygame.display.flip()
         pygame.time.wait(10)
