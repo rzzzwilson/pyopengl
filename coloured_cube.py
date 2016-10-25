@@ -6,17 +6,13 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 
 colors = (
-          (1,0,0),
-          (0,1,0),
+          (0,0,0),
           (0,0,1),
           (0,1,0),
-          (1,1,1),
           (0,1,1),
           (1,0,0),
-          (0,1,0),
-          (0,0,1),
-          (1,0,0),
-          (1,1,1),
+          (1,0,1),
+          (1,1,0),
           (0,1,1),
          )
 
@@ -35,9 +31,9 @@ surfaces = (
             (0, 4, 5, 1),
             (6, 4, 0, 3),
             (6, 7, 5, 4),
-            (3, 2, 1, 0),
-            (7, 6, 3, 2),
-            (7, 5, 1, 2),
+            (3, 0, 1, 2),
+            (7, 2, 3, 6),
+            (7, 2, 1, 5),
            )
 
 edges = (
@@ -75,7 +71,8 @@ def main():
     pygame.init()
     display = (800,600)
     pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
-    gluPerspective(45, (display[0]/display[1]), 0.1, 50.0)
+    gluPerspective(45, (float(display[0])/display[1]), 0.1, 50.0)
+    glEnable(GL_DEPTH_TEST)
     glTranslatef(0.0,0.0, -5)
     while True:
         for event in pygame.event.get():
