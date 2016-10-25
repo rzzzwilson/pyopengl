@@ -6,46 +6,28 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 import math
 
-colors = (
-          (0.0, 0.0, 0.0),
-          (0.0, 0.0, 0.5),
-          (0.0, 0.0, 1.0),
-          (0.0, 0.5, 1.0),
-          (0.0, 1.0, 0.0),
-          (0.0, 1.0, 0.5),
-          (0.0, 1.0, 1.0),
-          (0.5, 1.0, 1.0),
-          (1.0, 0.0, 0.0),
-          (1.0, 0.0, 0.5),
-          (1.0, 0.0, 1.0),
-          (1.0, 0.5, 1.0),
-          (1.0, 1.0, 0.0),
-          (1.0, 1.0, 0.5),
+colors = (# R    G    B
           (1.0, 1.0, 1.0),
+          (1.0, 1.0, 0.5),
+          (1.0, 1.0, 0.0),
+          (1.0, 0.5, 0.0),
+          (1.0, 0.0, 1.0),
+          (1.0, 0.0, 0.5),
+          (1.0, 0.0, 0.0),
+          (0.5, 0.0, 0.0),
+          (0.0, 1.0, 1.0),
+          (0.0, 1.0, 0.5),
+          (0.0, 1.0, 0.0),
+          (0.0, 0.5, 0.0),
+          (0.0, 0.0, 1.0),
+          (0.0, 0.0, 0.5),
+          (0.0, 0.0, 0.0),
          )
-
-#colors = (
-#          (1.0, 0.0, 0.0),
-#          (1.0, 0.5, 0.0),
-#          (1.0, 0.5, 0.5),
-#          (1.0, 0.0, 0.5),
-#          (1.0, 0.0, 0.0),
-#          (1.0, 0.5, 0.0),
-#          (1.0, 0.5, 0.5),
-#          (1.0, 0.0, 0.5),
-#          (1.0, 0.0, 0.0),
-#          (1.0, 0.5, 0.0),
-#          (1.0, 0.5, 0.5),
-#          (1.0, 0.0, 0.5),
-#          (1.0, 0.0, 0.0),
-#          (1.0, 0.5, 0.0),
-#          (1.0, 0.5, 0.5),
-#          (1.0, 0.0, 0.5),
-#         )
 
 Phi = (1.0 + math.sqrt(5.0))/2.0
 
 # vertices of dodecahedron centred at (0, 0, 0)
+# from: https://en.wikipedia.org/wiki/Regular_dodecahedron
 vertices = (
             ( 1.0,  1.0, -1.0),             # 0 orange
             (-1.0,  1.0, -1.0),             # 1
@@ -69,19 +51,20 @@ vertices = (
             ( Phi, 0.0, -1.0/Phi),          # 19
            )
 
+# note: the outer faces must be defined in CLOCKWISE order
 surfaces = (
             (0, 13, 3, 18, 19),
             (0, 9, 1, 12, 13),
-            (1, 16, 17, 2, 12),
-            (2, 10, 3, 13, 12),
             (0, 19, 4, 8, 9),
+            (1, 16, 17, 2, 12),
             (1, 9, 8, 5, 16),
+            (2, 10, 3, 13, 12),
             (2, 17, 6, 11, 10),
-            (3, 18, 7, 11, 10),
-            (7, 14, 4, 19, 18),
+            (3, 10, 11, 7, 18),
             (5, 15, 6, 17, 16),
-            (5, 15, 14, 4, 8),
-            (7, 14, 15, 6, 11),
+            (5, 8, 4, 14, 15),
+            (7, 14, 4, 19, 18),
+            (7, 11, 6, 15, 14),
            )
 edges = (
          (0, 9),
@@ -116,6 +99,7 @@ edges = (
          (18, 19),
         )
 
+# for the stipple
 fly = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
        0x03, 0x80, 0x01, 0xC0, 0x06, 0xC0, 0x03, 0x60,
        0x04, 0x60, 0x06, 0x20, 0x04, 0x30, 0x0C, 0x20,
@@ -134,15 +118,6 @@ fly = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
        0x10, 0x18, 0x18, 0x08, 0x10, 0x00, 0x00, 0x08]
 
 def Dodecahedron():
-#    glCullFace(GL_BACK)
-#    glPolygonMode(GL_FRONT, GL_FILL)
-#    glPolygonMode(GL_BACK, GL_FILL)
-#    glPolygonMode(GL_FRONT, GL_FILL)
-#    glEnable(GL_CULL_FACE)
-
-#    glFrontFace(GL_CW)
-#    glEnable (GL_POLYGON_STIPPLE)
-#    glPolygonStipple(fly)
     x = 0
     for surface in surfaces:
         x += 1
@@ -155,8 +130,6 @@ def Dodecahedron():
         glEnd()
 
     glPushAttrib(GL_ENABLE_BIT)
-    glLineStipple(2, 0xAAAA)
-    glEnable(GL_LINE_STIPPLE)
     glColor3fv((1.0, 1.0, 1.0))
     for edge in edges:
         glBegin(GL_LINES)
@@ -168,9 +141,27 @@ def Dodecahedron():
 def main():
     pygame.init()
     display = (800, 600)
+
     pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
     gluPerspective(45, (float(display[0])/display[1]), 0.1, 50.0)
     glTranslatef(0.0,0.0, -5)
+
+    glEnable(GL_DEPTH_TEST)     # adds solidity to colours
+
+    glFrontFace(GL_CCW)
+#    glFrontFace(GL_CW)
+    glEnable(GL_CULL_FACE)
+    glCullFace(GL_BACK)
+
+#    glPolygonMode(GL_BACK, GL_FILL)
+    glPolygonMode(GL_FRONT, GL_FILL)
+
+#    glEnable(GL_POLYGON_STIPPLE)
+#    glPolygonStipple(fly)
+
+#    glEnable(GL_LINE_STIPPLE)
+#    glLineStipple(2, 0xAAAA)
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -181,6 +172,5 @@ def main():
         Dodecahedron()
         pygame.display.flip()
         pygame.time.wait(10)
-        #pygame.time.wait(100)
 
 main()
