@@ -6,18 +6,14 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 
 colors = (
-          (1,0,0),
-          (0,1,0),
+          (0,0,0),
           (0,0,1),
           (0,1,0),
-          (1,1,1),
           (0,1,1),
           (1,0,0),
-          (0,1,0),
-          (0,0,1),
-          (1,0,0),
+          (1,0,1),
+          (1,1,0),
           (1,1,1),
-          (0,1,1),
          )
 
 vertices= (
@@ -35,9 +31,9 @@ surfaces = (
             (0, 4, 5, 1),
             (6, 4, 0, 3),
             (6, 7, 5, 4),
-            (3, 2, 1, 0),
-            (7, 6, 3, 2),
-            (7, 5, 1, 2),
+            (3, 0, 1, 2),
+            (7, 2, 3, 6),
+            (7, 2, 1, 5),
            )
 
 edges = (
@@ -57,11 +53,11 @@ edges = (
 
 def Cube():
     glBegin(GL_QUADS)
+    x = 0
     for surface in surfaces:
-        x = 0
+        x += 1
+        glColor3fv(colors[x])
         for vertex in surface:
-            x += 1
-            glColor3fv(colors[x])
             glVertex3fv(vertices[vertex])
     glEnd()
 
@@ -75,8 +71,9 @@ def main():
     pygame.init()
     display = (800,600)
     pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
+    glEnable(GL_DEPTH_TEST)
 
-    gluPerspective(45, (display[0]/display[1]), 0.1, 50.0)
+    gluPerspective(45, (float(display[0])/display[1]), 0.1, 50.0)
 
     glTranslatef(0, 0, -10)
 
