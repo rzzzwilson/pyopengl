@@ -1,5 +1,11 @@
 #! /usr/bin/env python
 
+"""
+Rotate a set of lines in the XZ plane (or close to it)
+plus a rectangle in the XZ plane that has only the 'front'
+surface filled, thereby being transparent from the back.
+"""
+
 import pygame
 from pygame.locals import *
 from OpenGL.GL import *
@@ -38,16 +44,16 @@ def show(lines):
         glEnd()
 
 Poly = (
-        ( 1.0,  1.0, 0.0),
-        ( 1.0, -1.0, 0.0),
-        (-1.0, -1.0, 0.0),
-        (-1.0,  1.0, 0.0),
+        ( 1.0,  1.0, -0.005),
+        ( 1.0, -1.0, -0.005),
+        (-1.0, -1.0, -0.005),
+        (-1.0,  1.0, -0.005),
        )
 
 def square():
     # draw filled square in XY plane
-    glLineWidth(1.0)
-    glColor3fv((0.7, 0.7, 1.0))
+    glLineWidth(10.0)
+    glColor3fv((0.7, 1.0, 0.7))
     glBegin(GL_POLYGON)
     for point in Poly:
         glVertex3fv(point)
@@ -70,17 +76,23 @@ def main():
     gluPerspective(45, (display[0]/display[1]), 0.1, 50.0)
     glTranslatef(0.0, 0.0, -5.0)
 
+    glEnable(GL_DEPTH_TEST)     # adds solidity to colours
+    #glFrontFace(GL_CCW)
+    glFrontFace(GL_CW)
+    glEnable(GL_CULL_FACE)
+    glCullFace(GL_BACK)
+
     dx = 0.0
     delta = -0.01
     while True:
         # create new display list by oscillating along X axis
-        d_list = []
-        for (bx, by, ex, ey) in LineList:
-            d_list.append((bx+dx, by, ex+dx, ey))
-        dx += delta
-        if dx > 0.5 or dx < -0.5:
-            delta = -delta
-#        d_list = LineList[:]
+#        d_list = []
+#        for (bx, by, ex, ey) in LineList:
+#            d_list.append((bx+dx, by, ex+dx, ey))
+#        dx += delta
+#        if dx > 0.5 or dx < -0.5:
+#            delta = -delta
+        d_list = LineList[:]
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
