@@ -77,31 +77,30 @@ def main():
     glTranslatef(0.0, 0.0, -5.0)
 
     glEnable(GL_DEPTH_TEST)     # adds solidity to colours
-    #glFrontFace(GL_CCW)
     glFrontFace(GL_CW)
+    #glFrontFace(GL_CCW)
     glEnable(GL_CULL_FACE)
     glCullFace(GL_BACK)
 
     dx = 0.0
     delta = -0.01
     while True:
-        # create new display list by oscillating along X axis
-#        d_list = []
-#        for (bx, by, ex, ey) in LineList:
-#            d_list.append((bx+dx, by, ex+dx, ey))
-#        dx += delta
-#        if dx > 0.5 or dx < -0.5:
-#            delta = -delta
-        d_list = LineList[:]
+        # create new display list by oscillating lines along X axis
+        d_list = []
+        for (bx, by, ex, ey) in LineList:
+            d_list.append((bx+dx, by, ex+dx, ey))
+        dx += delta
+        if dx >= 0.00 or dx <= -1.00:
+            delta = -delta
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-        glRotatef(1, 0, 3, 0)
+        glRotatef(1, 0, 1, 0)
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-        square()
         show(d_list)
+        square()
         pygame.display.flip()
         pygame.time.wait(10)
 
